@@ -1,0 +1,10 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/KeyHub.Core/KeyHub.Core.csproj" />
+    <Project Path="src/KeyHub.Cli/KeyHub.Cli.csproj" />
+    <Project Path="src/KeyHub.Desktop/KeyHub.Desktop.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/KeyHub.Tests/KeyHub.Tests.csproj" />
+  </Folder>
+</Solution>

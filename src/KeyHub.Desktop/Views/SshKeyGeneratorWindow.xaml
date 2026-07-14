@@ -1,0 +1,10 @@
+<Window x:Class="KeyHub.Desktop.Views.SshKeyGeneratorWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="生成 SSH 密钥" Width="520" Height="310" WindowStartupLocation="CenterOwner" ResizeMode="NoResize" Background="{StaticResource CanvasBrush}">
+    <Grid Margin="26"><Grid.RowDefinitions><RowDefinition Height="Auto" /><RowDefinition Height="*" /><RowDefinition Height="Auto" /></Grid.RowDefinitions>
+        <StackPanel><TextBlock Text="生成 Ed25519 密钥" FontSize="25" FontWeight="SemiBold" /><TextBlock Text="私钥导入 KeyHub；公钥保存在备注中，方便复制到服务器。" Style="{StaticResource PageSubtitle}" /></StackPanel>
+        <Grid Grid.Row="1" Margin="0,22,0,18"><Grid.ColumnDefinitions><ColumnDefinition Width="105" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions><Grid.RowDefinitions><RowDefinition Height="Auto" /><RowDefinition Height="Auto" /></Grid.RowDefinitions><TextBlock Text="密钥名称" VerticalAlignment="Center" /><TextBox x:Name="NameBox" Grid.Column="1" Height="36" VerticalContentAlignment="Center" /><TextBlock Grid.Row="1" Text="公钥备注" Margin="0,16,0,0" VerticalAlignment="Center" /><TextBox x:Name="CommentBox" Grid.Row="1" Grid.Column="1" Height="36" Margin="0,12,0,0" VerticalContentAlignment="Center" /></Grid>
+        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right"><Button Content="取消" Click="OnCancel" /><Button Content="生成并保存" Style="{StaticResource PrimaryButton}" Margin="10,0,0,0" Click="OnSave" /></StackPanel>
+    </Grid>
+</Window>

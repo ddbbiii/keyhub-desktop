@@ -1,0 +1,26 @@
+name: build
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: windows-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+      - run: dotnet test KeyHub.slnx -c Release --logger "console;verbosity=normal"
+      - run: dotnet publish src/KeyHub.Desktop/KeyHub.Desktop.csproj -c Release -r win-x64 --self-contained true -p:PublishTrimmed=false -p:DebugType=None -o artifacts/publish
+      - run: dotnet publish src/KeyHub.Cli/KeyHub.Cli.csproj -c Release -r win-x64 --self-contained true -p:PublishTrimmed=false -p:DebugType=None -o artifacts/cli

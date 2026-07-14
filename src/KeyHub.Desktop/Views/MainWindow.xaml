@@ -1,0 +1,98 @@
+<Window x:Class="KeyHub.Desktop.Views.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="KeyHub Desktop" Width="1240" Height="790" MinWidth="1050" MinHeight="680"
+        WindowStartupLocation="CenterScreen" Background="{StaticResource CanvasBrush}">
+    <Grid>
+        <Grid.ColumnDefinitions><ColumnDefinition Width="224" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
+
+        <Border Background="#0D2927">
+            <Grid>
+                <Grid.RowDefinitions><RowDefinition Height="Auto" /><RowDefinition Height="*" /><RowDefinition Height="Auto" /></Grid.RowDefinitions>
+                <StackPanel Margin="24,26,20,22">
+                    <Border Width="46" Height="46" CornerRadius="14" Background="#19B8AA" HorizontalAlignment="Left">
+                        <TextBlock Text="K" Foreground="White" FontSize="25" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Border>
+                    <TextBlock Text="KeyHub" Foreground="White" FontSize="22" FontWeight="SemiBold" Margin="0,14,0,0" />
+                    <TextBlock Text="LOCAL SECRET DESK" Foreground="#79A49F" FontSize="9" FontWeight="Bold" />
+                </StackPanel>
+                <StackPanel Grid.Row="1">
+                    <Button x:Name="DashboardNav" Content="⌂   概览" Style="{StaticResource NavButton}" Click="OnNavigate" Tag="Dashboard" />
+                    <Button x:Name="SecretsNav" Content="◆   密钥" Style="{StaticResource NavButton}" Click="OnNavigate" Tag="Secrets" />
+                    <Button x:Name="ProjectsNav" Content="▣   项目" Style="{StaticResource NavButton}" Click="OnNavigate" Tag="Projects" />
+                    <Button x:Name="ServersNav" Content="▤   服务器" Style="{StaticResource NavButton}" Click="OnNavigate" Tag="Servers" />
+                    <Button x:Name="ImportNav" Content="⇩   导入" Style="{StaticResource NavButton}" Click="OnNavigate" Tag="Import" />
+                    <Button x:Name="ActivityNav" Content="◷   操作记录" Style="{StaticResource NavButton}" Click="OnNavigate" Tag="Activity" />
+                    <Button x:Name="SettingsNav" Content="⚙   设置" Style="{StaticResource NavButton}" Click="OnNavigate" Tag="Settings" />
+                </StackPanel>
+                <Border Grid.Row="2" Margin="16,0,16,18" Padding="14" CornerRadius="12" Background="#153D39">
+                    <StackPanel>
+                        <TextBlock Text="当前 Windows 用户" Foreground="#8FB6B1" FontSize="11" />
+                        <TextBlock x:Name="CurrentUserText" Foreground="White" FontWeight="SemiBold" Margin="0,4,0,0" />
+                        <TextBlock Text="DPAPI 自动保护" Foreground="#4DD6C8" FontSize="11" Margin="0,3,0,0" />
+                    </StackPanel>
+                </Border>
+            </Grid>
+        </Border>
+
+        <Grid Grid.Column="1" Margin="34,26,34,30">
+            <Grid x:Name="DashboardPage">
+                <Grid.RowDefinitions><RowDefinition Height="Auto" /><RowDefinition Height="Auto" /><RowDefinition Height="*" /></Grid.RowDefinitions>
+                <StackPanel><TextBlock Text="本机密钥，一处管理" Style="{StaticResource PageTitle}" /><TextBlock Text="通过普通环境变量连接你的项目，需要时再导出或部署。" Style="{StaticResource PageSubtitle}" /></StackPanel>
+                <UniformGrid Grid.Row="1" Columns="4" Margin="0,25,0,20">
+                    <Border Style="{StaticResource Panel}" Margin="0,0,12,0"><StackPanel><TextBlock Text="密钥" Foreground="{StaticResource MutedBrush}" /><TextBlock x:Name="SecretCountText" FontSize="30" FontWeight="SemiBold" Margin="0,10,0,0" /><TextBlock Text="逐条 DPAPI 加密" Foreground="#0D9488" FontSize="11" /></StackPanel></Border>
+                    <Border Style="{StaticResource Panel}" Margin="4,0,8,0"><StackPanel><TextBlock Text="项目" Foreground="{StaticResource MutedBrush}" /><TextBlock x:Name="ProjectCountText" FontSize="30" FontWeight="SemiBold" Margin="0,10,0,0" /><TextBlock Text="运行时环境注入" Foreground="#0D9488" FontSize="11" /></StackPanel></Border>
+                    <Border Style="{StaticResource Panel}" Margin="8,0,4,0"><StackPanel><TextBlock Text="服务器" Foreground="{StaticResource MutedBrush}" /><TextBlock x:Name="ServerCountText" FontSize="30" FontWeight="SemiBold" Margin="0,10,0,0" /><TextBlock Text="SSH 配置交付" Foreground="#0D9488" FontSize="11" /></StackPanel></Border>
+                    <Border Style="{StaticResource Panel}" Margin="12,0,0,0"><StackPanel><TextBlock Text="即将过期" Foreground="{StaticResource MutedBrush}" /><TextBlock x:Name="ExpiringCountText" FontSize="30" FontWeight="SemiBold" Margin="0,10,0,0" /><TextBlock Text="未来 30 天" Foreground="#D97706" FontSize="11" /></StackPanel></Border>
+                </UniformGrid>
+                <Grid Grid.Row="2"><Grid.ColumnDefinitions><ColumnDefinition Width="2*" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
+                    <Border Style="{StaticResource Panel}" Margin="0,0,10,0"><Grid><Grid.RowDefinitions><RowDefinition Height="Auto" /><RowDefinition Height="*" /></Grid.RowDefinitions><TextBlock Text="最近操作" FontSize="17" FontWeight="SemiBold" /><DataGrid x:Name="DashboardAuditGrid" Grid.Row="1" Margin="0,16,0,0" IsReadOnly="True"><DataGrid.Columns><DataGridTextColumn Header="时间" Binding="{Binding LocalTime}" Width="145" /><DataGridTextColumn Header="操作" Binding="{Binding ActionText}" Width="130" /><DataGridTextColumn Header="对象" Binding="{Binding TargetName}" Width="*" /><DataGridTextColumn Header="结果" Binding="{Binding ResultText}" Width="80" /></DataGrid.Columns></DataGrid></Grid></Border>
+                    <Border Grid.Column="1" Style="{StaticResource Panel}" Margin="10,0,0,0"><StackPanel><TextBlock Text="快速开始" FontSize="17" FontWeight="SemiBold" /><TextBlock Text="1" Foreground="#0D9488" FontSize="25" FontWeight="Bold" Margin="0,22,0,0" /><TextBlock Text="导入已有 .env 或 SSH 私钥" Margin="35,-27,0,0" /><TextBlock Text="2" Foreground="#0D9488" FontSize="25" FontWeight="Bold" Margin="0,24,0,0" /><TextBlock Text="建立项目环境变量映射" Margin="35,-27,0,0" /><TextBlock Text="3" Foreground="#0D9488" FontSize="25" FontWeight="Bold" Margin="0,24,0,0" /><TextBlock Text="使用 keyhub run 启动项目" Margin="35,-27,0,0" /><Button Content="开始导入" Style="{StaticResource PrimaryButton}" HorizontalAlignment="Left" Margin="0,30,0,0" Click="OnGoImport" /></StackPanel></Border>
+                </Grid>
+            </Grid>
+
+            <Grid x:Name="SecretsPage" Visibility="Collapsed">
+                <Grid.RowDefinitions><RowDefinition Height="Auto" /><RowDefinition Height="*" /><RowDefinition Height="Auto" /></Grid.RowDefinitions>
+                <Grid><StackPanel><TextBlock Text="密钥库" Style="{StaticResource PageTitle}" /><TextBlock Text="值保持遮挡；复制、编辑或注入时才在内存中解密。" Style="{StaticResource PageSubtitle}" /></StackPanel><StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Bottom"><TextBox x:Name="SecretSearchBox" Width="210" Height="38" VerticalContentAlignment="Center" TextChanged="OnSecretSearchChanged" ToolTip="搜索名称、标签或备注" /><Button Content="生成 SSH 密钥" Padding="15,8" Margin="10,0,0,0" Click="OnGenerateSshKey" /><Button Content="新增密钥" Style="{StaticResource PrimaryButton}" Margin="10,0,0,0" Click="OnAddSecret" /></StackPanel></Grid>
+                <Border Grid.Row="1" Style="{StaticResource Panel}" Margin="0,24,0,16"><DataGrid x:Name="SecretsGrid" IsReadOnly="True" MouseDoubleClick="OnEditSecret"><DataGrid.Columns><DataGridTextColumn Header="名称" Binding="{Binding Name}" Width="2*" /><DataGridTextColumn Header="类型" Binding="{Binding KindText}" Width="150" /><DataGridTextColumn Header="标签" Binding="{Binding Tags}" Width="*" /><DataGridTextColumn Header="到期" Binding="{Binding ExpiryText}" Width="130" /><DataGridTextColumn Header="更新" Binding="{Binding UpdatedText}" Width="150" /></DataGrid.Columns></DataGrid></Border>
+                <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right"><Button Content="查看 / 编辑" Padding="16,8" Click="OnEditSecret" /><Button Content="复制密钥" Padding="16,8" Margin="10,0,0,0" Click="OnCopySecret" /><Button Content="删除" Padding="16,8" Margin="10,0,0,0" Click="OnDeleteSecret" /></StackPanel>
+            </Grid>
+
+            <Grid x:Name="ProjectsPage" Visibility="Collapsed">
+                <Grid.RowDefinitions><RowDefinition Height="Auto" /><RowDefinition Height="*" /></Grid.RowDefinitions>
+                <Grid><StackPanel><TextBlock Text="项目接入" Style="{StaticResource PageTitle}" /><TextBlock Text="项目只看到普通环境变量，不需要依赖 KeyHub SDK。" Style="{StaticResource PageSubtitle}" /></StackPanel><Button Content="新增项目" Style="{StaticResource PrimaryButton}" HorizontalAlignment="Right" VerticalAlignment="Bottom" Click="OnAddProject" /></Grid>
+                <Grid Grid.Row="1" Margin="0,24,0,0"><Grid.ColumnDefinitions><ColumnDefinition Width="370" /><ColumnDefinition Width="18" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
+                    <Border Style="{StaticResource Panel}"><Grid><Grid.RowDefinitions><RowDefinition Height="Auto" /><RowDefinition Height="*" /><RowDefinition Height="Auto" /></Grid.RowDefinitions><TextBlock Text="项目" FontSize="17" FontWeight="SemiBold" /><DataGrid x:Name="ProjectsGrid" Grid.Row="1" Margin="0,14,0,12" IsReadOnly="True" SelectionChanged="OnProjectSelected"><DataGrid.Columns><DataGridTextColumn Header="名称" Binding="{Binding DisplayName}" Width="*" /><DataGridTextColumn Header="变量" Binding="{Binding BindingCount}" Width="70" /></DataGrid.Columns></DataGrid><StackPanel Grid.Row="2" Orientation="Horizontal"><Button Content="编辑" Click="OnEditProject" /><Button Content="删除" Margin="8,0,0,0" Click="OnDeleteProject" /></StackPanel></Grid></Border>
+                    <Border Grid.Column="2" Style="{StaticResource Panel}"><Grid><Grid.RowDefinitions><RowDefinition Height="Auto" /><RowDefinition Height="Auto" /><RowDefinition Height="*" /><RowDefinition Height="Auto" /></Grid.RowDefinitions><TextBlock x:Name="ProjectDetailTitle" Text="选择一个项目" FontSize="20" FontWeight="SemiBold" /><TextBlock x:Name="ProjectDetailPath" Grid.Row="1" Foreground="{StaticResource MutedBrush}" Margin="0,5,0,0" TextTrimming="CharacterEllipsis" /><DataGrid x:Name="BindingsGrid" Grid.Row="2" Margin="0,20,0,14" IsReadOnly="True"><DataGrid.Columns><DataGridTextColumn Header="环境变量" Binding="{Binding EnvironmentName}" Width="*" /><DataGridTextColumn Header="密钥" Binding="{Binding SecretName}" Width="*" /></DataGrid.Columns></DataGrid><Grid Grid.Row="3"><StackPanel Orientation="Horizontal"><Button Content="添加映射" Click="OnAddBinding" /><Button Content="移除映射" Margin="8,0,0,0" Click="OnRemoveBinding" /></StackPanel><StackPanel Orientation="Horizontal" HorizontalAlignment="Right"><Button Content="复制启动命令" Click="OnCopyRunCommand" /><Button Content="导出配置" Style="{StaticResource PrimaryButton}" Margin="8,0,0,0" Click="OnExportProject" /></StackPanel></Grid></Grid></Border>
+                </Grid>
+            </Grid>
+
+            <Grid x:Name="ServersPage" Visibility="Collapsed">
+                <Grid.RowDefinitions><RowDefinition Height="Auto" /><RowDefinition Height="*" /></Grid.RowDefinitions>
+                <Grid><StackPanel><TextBlock Text="服务器交付" Style="{StaticResource PageTitle}" /><TextBlock Text="先确认主机指纹，再把项目变量写入 Linux 或 Windows 配置文件。" Style="{StaticResource PageSubtitle}" /></StackPanel><StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Bottom"><Button Content="新增服务器" Click="OnAddServer" /><Button Content="新增部署" Style="{StaticResource PrimaryButton}" Margin="10,0,0,0" Click="OnAddDeployment" /></StackPanel></Grid>
+                <Grid Grid.Row="1" Margin="0,24,0,0"><Grid.RowDefinitions><RowDefinition Height="1.05*" /><RowDefinition Height="18" /><RowDefinition Height="*" /></Grid.RowDefinitions>
+                    <Border Style="{StaticResource Panel}"><Grid><Grid.RowDefinitions><RowDefinition Height="Auto" /><RowDefinition Height="*" /><RowDefinition Height="Auto" /></Grid.RowDefinitions><TextBlock Text="服务器" FontSize="17" FontWeight="SemiBold" /><DataGrid x:Name="ServersGrid" Grid.Row="1" Margin="0,13,0,10" IsReadOnly="True"><DataGrid.Columns><DataGridTextColumn Header="名称" Binding="{Binding Name}" Width="*" /><DataGridTextColumn Header="地址" Binding="{Binding Address}" Width="220" /><DataGridTextColumn Header="系统" Binding="{Binding OsText}" Width="100" /><DataGridTextColumn Header="认证" Binding="{Binding AuthenticationName}" Width="160" /><DataGridTextColumn Header="主机指纹" Binding="{Binding FingerprintStatus}" Width="130" /></DataGrid.Columns></DataGrid><StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right"><Button Content="编辑" Click="OnEditServer" /><Button Content="测试并确认指纹" Margin="8,0,0,0" Click="OnTestServer" /><Button Content="删除" Margin="8,0,0,0" Click="OnDeleteServer" /></StackPanel></Grid></Border>
+                    <Border Grid.Row="2" Style="{StaticResource Panel}"><Grid><Grid.RowDefinitions><RowDefinition Height="Auto" /><RowDefinition Height="*" /><RowDefinition Height="Auto" /></Grid.RowDefinitions><TextBlock Text="部署配置" FontSize="17" FontWeight="SemiBold" /><DataGrid x:Name="DeploymentsGrid" Grid.Row="1" Margin="0,13,0,10" IsReadOnly="True"><DataGrid.Columns><DataGridTextColumn Header="名称" Binding="{Binding Name}" Width="*" /><DataGridTextColumn Header="服务器" Binding="{Binding ServerName}" Width="150" /><DataGridTextColumn Header="项目" Binding="{Binding ProjectName}" Width="170" /><DataGridTextColumn Header="目标文件" Binding="{Binding TargetPath}" Width="2*" /><DataGridTextColumn Header="格式" Binding="{Binding FormatText}" Width="90" /></DataGrid.Columns></DataGrid><Grid Grid.Row="2"><StackPanel Orientation="Horizontal"><Button Content="编辑" Click="OnEditDeployment" /><Button Content="删除" Margin="8,0,0,0" Click="OnDeleteDeployment" /></StackPanel><StackPanel Orientation="Horizontal" HorizontalAlignment="Right"><Button Content="复制明文" Click="OnCopyDeployment" /><Button Content="通过 SSH 部署" Style="{StaticResource PrimaryButton}" Margin="8,0,0,0" Click="OnDeploy" /></StackPanel></Grid></Grid></Border>
+                </Grid>
+            </Grid>
+
+            <Grid x:Name="ImportPage" Visibility="Collapsed">
+                <Grid.RowDefinitions><RowDefinition Height="Auto" /><RowDefinition Height="Auto" /><RowDefinition Height="*" /><RowDefinition Height="Auto" /></Grid.RowDefinitions>
+                <StackPanel><TextBlock Text="导入已有密钥" Style="{StaticResource PageTitle}" /><TextBlock Text="扫描前不会修改文件；导入后也不会自动删除原始 .env 或 SSH 私钥。" Style="{StaticResource PageSubtitle}" /></StackPanel>
+                <Border Grid.Row="1" Style="{StaticResource Panel}" Margin="0,24,0,16"><Grid><Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /><ColumnDefinition Width="Auto" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions><TextBox x:Name="ImportPathBox" Height="38" VerticalContentAlignment="Center" /><Button Grid.Column="1" Content="选择文件" Margin="10,0,0,0" Padding="15,7" Click="OnBrowseImportFile" /><Button Grid.Column="2" Content="选择目录" Margin="10,0,0,0" Padding="15,7" Click="OnBrowseImport" /><Button Grid.Column="3" Content="扫描" Style="{StaticResource PrimaryButton}" Margin="10,0,0,0" Click="OnScanImport" /></Grid></Border>
+                <Border Grid.Row="2" Style="{StaticResource Panel}"><DataGrid x:Name="ImportGrid"><DataGrid.Columns><DataGridCheckBoxColumn Header="导入" Binding="{Binding Selected}" Width="70" /><DataGridTextColumn Header="名称" Binding="{Binding Name}" Width="*" IsReadOnly="True" /><DataGridTextColumn Header="类型" Binding="{Binding KindText}" Width="140" IsReadOnly="True" /><DataGridTextColumn Header="来源" Binding="{Binding SourcePath}" Width="2*" IsReadOnly="True" /><DataGridTextColumn Header="预览" Binding="{Binding Preview}" Width="160" IsReadOnly="True" /></DataGrid.Columns></DataGrid></Border>
+                <Grid Grid.Row="3" Margin="0,16,0,0"><TextBlock x:Name="ImportStatusText" VerticalAlignment="Center" Foreground="{StaticResource MutedBrush}" /><Button Content="导入所选" Style="{StaticResource PrimaryButton}" HorizontalAlignment="Right" Click="OnImportSelected" /></Grid>
+            </Grid>
+
+            <Grid x:Name="ActivityPage" Visibility="Collapsed">
+                <Grid.RowDefinitions><RowDefinition Height="Auto" /><RowDefinition Height="*" /></Grid.RowDefinitions><StackPanel><TextBlock Text="操作记录" Style="{StaticResource PageTitle}" /><TextBlock Text="只记录动作、对象与结果，不记录密钥值。" Style="{StaticResource PageSubtitle}" /></StackPanel><Border Grid.Row="1" Style="{StaticResource Panel}" Margin="0,24,0,0"><DataGrid x:Name="ActivityGrid" IsReadOnly="True"><DataGrid.Columns><DataGridTextColumn Header="时间" Binding="{Binding LocalTime}" Width="155" /><DataGridTextColumn Header="操作" Binding="{Binding ActionText}" Width="150" /><DataGridTextColumn Header="类型" Binding="{Binding TargetType}" Width="110" /><DataGridTextColumn Header="对象" Binding="{Binding TargetName}" Width="*" /><DataGridTextColumn Header="结果" Binding="{Binding ResultText}" Width="80" /><DataGridTextColumn Header="说明" Binding="{Binding Detail}" Width="2*" /></DataGrid.Columns></DataGrid></Border>
+            </Grid>
+
+            <Grid x:Name="SettingsPage" Visibility="Collapsed">
+                <Grid.RowDefinitions><RowDefinition Height="Auto" /><RowDefinition Height="Auto" /><RowDefinition Height="Auto" /></Grid.RowDefinitions><StackPanel><TextBlock Text="设置" Style="{StaticResource PageTitle}" /><TextBlock Text="KeyHub 不联网、不上传数据，也不要求额外主密码。" Style="{StaticResource PageSubtitle}" /></StackPanel>
+                <Border Grid.Row="1" Style="{StaticResource Panel}" Margin="0,24,0,16"><Grid><Grid.ColumnDefinitions><ColumnDefinition Width="210" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions><Grid.RowDefinitions><RowDefinition Height="Auto" /><RowDefinition Height="Auto" /><RowDefinition Height="Auto" /></Grid.RowDefinitions><TextBlock Text="数据库位置" VerticalAlignment="Center" /><TextBlock x:Name="DatabasePathText" Grid.Column="1" TextWrapping="Wrap" Foreground="{StaticResource MutedBrush}" /><TextBlock Grid.Row="1" Text="剪贴板自动清除" Margin="0,20,0,0" VerticalAlignment="Center" /><StackPanel Grid.Row="1" Grid.Column="1" Orientation="Horizontal" Margin="0,14,0,0"><TextBox x:Name="ClipboardSecondsBox" Width="80" Height="35" VerticalContentAlignment="Center" /><TextBlock Text="秒（0 表示不自动清除）" VerticalAlignment="Center" Margin="10,0,0,0" Foreground="{StaticResource MutedBrush}" /></StackPanel><TextBlock Grid.Row="2" Text="数据恢复" Margin="0,20,0,0" /><TextBlock Grid.Row="2" Grid.Column="1" Margin="0,20,0,0" Text="没有云同步和恢复密码。Windows 用户配置丢失后，DPAPI 密文可能无法恢复。" TextWrapping="Wrap" Foreground="#B45309" /></Grid></Border>
+                <Button Grid.Row="2" Content="保存设置" Style="{StaticResource PrimaryButton}" HorizontalAlignment="Right" Click="OnSaveSettings" />
+            </Grid>
+        </Grid>
+    </Grid>
+</Window>

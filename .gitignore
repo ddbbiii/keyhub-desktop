@@ -1,0 +1,15 @@
+**/bin/
+**/obj/
+.vs/
+artifacts/
+TestResults/
+*.user
+*.suo
+*.log
+*.tmp
+.env
+.env.*
+!.env.example
+keyhub.db
+keyhub.db-*
+.codex-memory/

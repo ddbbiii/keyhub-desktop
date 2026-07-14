@@ -1,0 +1,48 @@
+name: release
+
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+      - name: Test
+        run: dotnet test KeyHub.slnx -c Release
+      - name: Publish desktop and CLI
+        shell: pwsh
+        run: |
+          dotnet publish src/KeyHub.Desktop/KeyHub.Desktop.csproj -c Release -r win-x64 --self-contained true -p:PublishTrimmed=false -p:DebugType=None -o artifacts/publish
+          dotnet publish src/KeyHub.Cli/KeyHub.Cli.csproj -c Release -r win-x64 --self-contained true -p:PublishTrimmed=false -p:DebugType=None -o artifacts/publish/cli
+          Compress-Archive artifacts/publish/* "artifacts/KeyHubDesktop-${{ github.ref_name }}-Portable-x64.zip"
+      - name: Build installer
+        shell: pwsh
+        run: |
+          choco install innosetup --no-progress -y
+          $version = "${{ github.ref_name }}".TrimStart('v')
+          & "C:\Program Files (x86)\Inno Setup 6\ISCC.exe" "/DAppVersion=$version" "/DPublishDir=$pwd\artifacts\publish" installer/KeyHubDesktop.iss
+      - name: Checksums
+        shell: pwsh
+        run: |
+          Get-ChildItem artifacts -File | Where-Object Extension -in '.zip','.exe' | ForEach-Object {
+            "$(Get-FileHash $_.FullName -Algorithm SHA256 | Select-Object -ExpandProperty Hash)  $($_.Name)"
+          } | Set-Content artifacts/SHA256SUMS.txt
+      - uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            artifacts/*.zip
+            artifacts/*Setup-x64.exe
+            artifacts/SHA256SUMS.txt

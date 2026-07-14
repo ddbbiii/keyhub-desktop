@@ -15,9 +15,9 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - uses: gitleaks/gitleaks-action@v2
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Scan repository for secrets
+        shell: pwsh
+        run: ./.github/scripts/Invoke-Gitleaks.ps1
       - uses: actions/setup-dotnet@v4
         with:
           dotnet-version: 10.0.x
